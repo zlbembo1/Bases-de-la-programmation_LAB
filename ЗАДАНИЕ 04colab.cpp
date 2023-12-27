@@ -1,70 +1,68 @@
 #include <iostream>
+#include <vector>
+#include <string>
 
 using namespace std;
 
-const int MAX_N = 9; // Maximum value of n 
-
-bool isSafe(char board[MAX_N][MAX_N], int row, int col, int n) {
-    // Check vertical, horizontal, and diagonals
-    for (int i = 0; i < row; ++i) {
+bool isSafe(vector<string>& board, int row, int col, int n) {
+    // Check if there is a queen in the same column
+    for (int i = 0; i < row; i++) {
         if (board[i][col] == 'Q') {
-            return false; // Check vertical
-        }
-        if (col - (row - i) >= 0 && board[i][col - (row - i)] == 'Q') {
-            return false; // Check left diagonal
-        }
-        if (col + (row - i) < n && board[i][col + (row - i)] == 'Q') {
-            return false; // Check right diagonal
+            return false;
         }
     }
+
+    // Check if there is a queen in the upper left diagonal
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 'Q') {
+            return false;
+        }
+    }
+
+    // Check if there is a queen in the upper right diagonal
+    for (int i = row, j = col; i >= 0 && j < n; i--, j++) {
+        if (board[i][j] == 'Q') {
+            return false;
+        }
+    }
+
     return true;
 }
 
-void printBoard(char board[MAX_N][MAX_N], int n) {
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cout << board[i][j] << " ";
-        }
-        cout << endl;
-    }
-    cout << "-----" << endl;
-}
-
-void solveNQueens(int row, int n, char board[MAX_N][MAX_N]) {
+void solveNQueens(vector<vector<string>>& solutions, vector<string>& board, int row, int n) {
     if (row == n) {
-        // Reached the final row, print the current configuration
-        printBoard(board, n);
+        solutions.push_back(board);
         return;
     }
 
-    for (int col = 0; col < n; ++col) {
+    for (int col = 0; col < n; col++) {
         if (isSafe(board, row, col, n)) {
-            // Place the queen if the cell is safe
             board[row][col] = 'Q';
-            solveNQueens(row + 1, n, board);
-            board[row][col] = '.'; // Undo the choice to explore other options
+            solveNQueens(solutions, board, row + 1, n);
+            board[row][col] = '.';
         }
     }
 }
 
+vector<vector<string>> solveNQueens(int n) {
+    vector<vector<string>> solutions;
+    vector<string> board(n, string(n, '.'));
+
+    solveNQueens(solutions, board, 0, n);
+
+    return solutions;
+}
+
 int main() {
-    int n;
-    cout << "Enter the value of n (1-9): ";
-    cin >> n;
+    int n = 4;
+    vector<vector<string>> solutions = solveNQueens(n);
 
-    if (n < 1 || n > 9) {
-        cout << "Invalid input. n should be between 1 and 9 inclusive." << endl;
-        return 1;
-    }
-
-    char board[MAX_N][MAX_N];
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            board[i][j] = '.'; // Initialize the board with empty cells
+    for (const auto& solution : solutions) {
+        for (const auto& row : solution) {
+            cout << row << endl;
         }
+        cout << endl;
     }
-
-    solveNQueens(0, n, board);
 
     return 0;
 }
