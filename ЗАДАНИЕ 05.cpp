@@ -1,14 +1,19 @@
 #include <iostream>
-#include <vector> //to create and manipulate dynamic arrays like matrices
-#include <stack> //implements stack data structure
+#include <vector>
+#include <stack>
 
 using namespace std;
 
-bool validInput(char c) {//to check user's input values
-    return c == '0' || c == '1';
+char validInput(char c) {
+    if (c == '0' || c == '1') {
+        return c;
+    } else {
+        cout << "Invalid input. Please enter '0' or '1'." << endl;
+        return '0'; // or '1' depending on the case
+    }
 }
 
-int Rectangle(vector<vector<char>>& matrix) {//takes 2d vector, returns int
+int Rectangle(vector<vector<char>>& matrix) {
     if (matrix.empty() || matrix.size() == 0 || matrix[0].size() == 0) {
         return 0;
     }
@@ -16,10 +21,9 @@ int Rectangle(vector<vector<char>>& matrix) {//takes 2d vector, returns int
     int rows = matrix.size();
     int cols = matrix[0].size();
 
-    // Check conditions
     if (rows == matrix.size() && cols == matrix[0].size() && rows >= 1 && rows <= 200 && cols >= 1 && cols <= 200) {
         vector<int> heights(cols, 0);
-        int maxArea = 0;//initialize var to store max area 
+        int maxArea = 0;
 
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
@@ -28,10 +32,8 @@ int Rectangle(vector<vector<char>>& matrix) {//takes 2d vector, returns int
                     cout << "Enter value (0 or 1) for matrix[" << i << "][" << j << "]: ";
                     cin >> input;
 
-                    if (!validInput(input)) {
-                        cout << "Invalid input. Please enter '0' or '1'." << endl;
-                    }
-                } while (!validInput(input));
+                    input = validInput(input);
+                } while (input == '0' || input == '1');
 
                 matrix[i][j] = input;
             }
@@ -79,3 +81,4 @@ int main() {
 
     return 0;
 }
+
