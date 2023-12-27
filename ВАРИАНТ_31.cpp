@@ -1,50 +1,43 @@
-#include <iostream> 
-#include <algorithm> 
-#include <vector> 
+#include <iostream>
+#include <algorithm>
 
 class Vector {
-public:
+private:
     int length;
-    std::vector<double> elements;
+    double* array;
 
 public:
-    // Конструкторы 
-    Vector(int len) : length(len) {}
-    Vector(int len, const std::vector<double>& data) : length(len), elements(data) {}
-
-    // Метод сортировки элементов по возрастанию 
-    void sortInc() {
-        std::sort(elements.begin(), elements.end());
+    Vector(int len) {
+        length = len;
+        array = new double[length];
     }
 
-    // Метод сортировки элементов так, что сначала идут отрицательные компоненты, а затем положительные 
+    Vector(int len, double* arr) {
+        length = len;
+        array = new double[length];
+        std::copy(arr, arr + length, array);
+    }
+
+    void sortInc() {
+        std::sort(array, array + length);
+    }
+
     void sortNeg() {
-        std::sort(elements.begin(), elements.end(), [](double a, double b) {
-            return (a >= 0) && (b < 0);
+        std::sort(array, array + length, [](double a, double b) {
+            return (a < 0 && b >= 0);
             });
     }
 };
 
 int main() {
-    // Создание объекта класса Vector 
-    std::vector<double> data = { 5.2, -3.1, 8.4, -1.7, 2.8 };
-    Vector vec(5, data);
+    double arr[] = { -2.5, 1.3, -4.7, 3.2, -0.8 };
+    int len = sizeof(arr) / sizeof(arr[0]);
 
-    // Тестирование метода sortInc() 
-    vec.sortInc();
-    std::cout << "Sorted in increasing order: ";
-    for (double elem : vec.elements) {
-        std::cout << elem << " ";
-    }
-    std::cout << std::endl;
+    Vector vec1(len);
+    Vector vec2(len, arr);
 
-    // Тестирование метода sortNeg() 
-    vec.sortNeg();
-    std::cout << "Sorted with negative elements first: ";
-    for (double elem : vec.elements) {
-        std::cout << elem << " ";
-    }
-    std::cout << std::endl;
+    vec1.sortInc();
+    vec2.sortNeg();
 
     return 0;
 }
