@@ -1,42 +1,49 @@
 #include <iostream>
+#include <queue>
 #include <vector>
-#include <algorithm>
 
 class MedianFinder {
-private:
-    std::vector<int> numbers;
-
 public:
-    void addNumber(int num) {
-        numbers.push_back(num);
+    std::priority_queue<double> maxheap;
+    std::priority_queue<double, std::vector<double>, std::greater<double>> minheap;
+
+    MedianFinder() {
+
     }
 
-    double calculateMedian() const {
-        std::vector<int> sortedNumbers = numbers;
-        std::sort(sortedNumbers.begin(), sortedNumbers.end());
-
-        int size = sortedNumbers.size();
-
-        if (size % 2 == 0) {
-            // If the size is even, average the middle two numbers
-            return (sortedNumbers[size / 2 - 1] + sortedNumbers[size / 2]) / 2.0;
-        } else {
-            // If the size is odd, return the middle number
-            return sortedNumbers[size / 2];
+    void addNum(int num) {
+        maxheap.push(num);
+        if (!maxheap.empty() && !minheap.empty() && maxheap.top() > minheap.top()) {
+            double temp = maxheap.top();
+            maxheap.pop();
+            minheap.push(temp);
         }
+        if (maxheap.size() > minheap.size() + 1) {
+            double temp = maxheap.top();
+            maxheap.pop();
+            minheap.push(temp);
+        }
+        if (minheap.size() > maxheap.size() + 1) {
+            double temp = minheap.top();
+            minheap.pop();
+            maxheap.push(temp);
+        }
+    }
+
+    double findMedian() {
+        if (maxheap.size() > minheap.size()) return maxheap.top();
+        if (minheap.size() > maxheap.size()) return minheap.top();
+        return (maxheap.top() + minheap.top()) / 2;
     }
 };
 
 int main() {
-    MedianFinder median;
+    MedianFinder* obj = new MedianFinder();
+    obj->addNum(1);
+    obj->addNum(2);
+    std::cout << "Median: " << obj->findMedian() << std::endl;
+    obj->addNum(3);
+    std::cout << "Median: " << obj->findMedian() << std::endl;
 
-    // Input numbers from the user
-    int num;
-    std::cout << "Enter numbers (enter a non-numeric value to finish):" << std::endl;
-    while (std::cin >> num) {
-        median.addNumber(num);
-    }
-
-    // Calculate and display the median
-    std::cout << "Median: " <<median.calculateMedian()<<std::endl;
+    return 0;
 }
